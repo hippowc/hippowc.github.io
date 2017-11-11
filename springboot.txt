@@ -1,39 +1,59 @@
 讲义：
 第一节：
-spring介绍：springboot是spring的一个产品级应用。它使得创建基于spring的web应用变得非常简单。它提前帮你引入了必要的spring以及三方库的jar包，你只需要进行极少的配置就可以创建一个可以单独运行的web应用。
-spring boot的特点：提供独立运行的spring 应用；嵌入式的web容器（不需要部署war包）；提供默认的starter，简化maven配置；自动配置spring；提供产品级的特性：监控，健康检查等；没有代码生成和xml配置；
-##spring boot不是spring的精简版本，而是对spring进行了了一层包装，使得基于spring的开发变得更加高效快捷。
-##使用过spring boot进行开发的朋友一定体会到过spring boot带来的如斯般顺滑的开发体验，那么spring boot是如何做到这些的呢？这就是这门课程要为大家呈现的内容。
-##接下来介绍下我们的课程安排：
-spring boot快速上手  ##从零创建一个springboot应用并运行；特性展示；引出问题：功能模块在哪里？功能模块是如何进行配置？功能模块又是怎样被调用的？（以tomcat容器为例）
-spring boot starter  ##parent pom做了什么；starter中是什么；有什么作用
-spring boot的配置方式  ##配置文件在哪里；spring boot无xml的配置方式；@Configuration @Import 等注解的使用；如何支持用户自定义配置；可以做些代码演示；
-@EnableAutoconfiguration 注解分析  ##注解组合；EnableAutoconfiguration注解分析；默认配置文件在哪里
-运行环境推测—SpringApplication的初始化  ##初始化做了什么；如何进行运行环境推测；processor类的注册
-配置类处理器—ConfigurationClassPostProcessor介绍  ##类介绍；autoconfig文件的读取
-配置类的解析及注册过程  ##功能模块如何注册到spring上下文；如何使用；以tomcat为例
+大家好，springboot以其提供的快速易用的web开发方式博得众多关注，我们这套课程将为大家介绍下springboot的自动配置原理。
+我们第一节课的主要内容是这样的：首先我们会对springboot进行下简单的介绍，然后讲一下我们整体介绍下这套课的主要内容安排是怎样的。
+首先我们简单介绍下springboot：springboot是spring的一个产品级应用。它使得创建基于spring的web应用变得非常简单。它提前帮你引入了必要的spring jar包以及各种各样三方库的jar包，你只需要进行极少的配置就可以创建一个可以单独运行的web应用。spring boot的种种特性为开发者提供了快速的spring上手和开发体验。
+spring boot的特点：
+首先它提供的是可以独立运行的spring 应用；
+然后提供了嵌入式的web容器（开发完springboot应用后，不需要再安装web容器，部署war包等等操作，而是可以立即，独立运行在嵌入式容器中，非常方便）；
+提供默认的starter，简化maven依赖配置；
+自动配置spring，根据你的开发需要，提供多种多样的默认配置；
+springboot还提供很多产品级的特性：包括对应用的监控，健康检查等；
+没有代码生成和xml配置，让你的代码维护起来更加的简单易懂；
+##我们首先对srpignboot有一个正确的认识啊，spring boot不是spring的精简版本，而是对spring框架进行了一层包装，使得基于spring的开发变得更加高效快捷。
+##使用过spring boot进行开发的朋友一定体会到过spring boot带来的非常顺滑的开发体验，那么spring boot是如何做到这些的呢？这就是这门课程要为大家呈现的内容。
+##接下来介绍下我们这门课的的课程安排：
+##从零搭建一个springboo的简单应用并运行；大家可以体验下使用springboot进行web开发和我们之前普通web开发模式的区别
+##接下来我们会介绍spring boot starter是什么东西，它有什么作用。
+##然后我们会讲解下springboot的配置方式，我们看下不使用xml的springboot是如何进行代码配置的。
+然后我们会介绍下springboot提供的默认配置，在这节课中我们会了解一些条件注解方面的知识。
+#接下来我们会从源代码层面，深入分析springboot自动配置的原理，我们按照应用启动顺序，从三个功能模块对springboot进行分析：
+分别是：
+SpringApplication的初始化  
+配置类处理器—ConfigurationClassPostProcessor介绍  
+最后是enableautoconfiguration这个注解类的解析过程。
 ##整个课程的内容大概是这样，下节课我们使用springboot搭建一个web应用，进而对spring boot有更深入的了解
 
 第二节
 #这节课我们主要通过实际操作，给大家演示下如何使用spring boot快速创建一个web应用。
-系统要求：spring boot1.5.8要求jdk7以上，Spring Framework 4.3.12以上，编译工具如果使用maven的话maven要求3.2以上
+那么我们开始
+首先我们简单说一下使用springboot时系统环境徐做哪些准备，不同版本相对的系统要求也是不同的，我们这次演示使用的是springboot的 1.5.8release版本：spring boot1.5.8要求对java的版本要求是java7以上，编译工具如果使用maven的话maven要求3.2以上，然后Spring Framework 4.3.12以上，
+这些东西都可以去各自的官网上下载，准备好之后，我们可以进行代码开发了。
 代码演示：
 ##
 展示mven以及java版本：mvn -version
-创建一个maven工程：mvn archetype:generate -DgroupId=com.pers -DartifactId=demo-springboot -DarchetypeArtifactId=maven-archetype-quickstart -DinterativeMode=false
+我的maven，java，我使用的系统是mac os其他linux以及windows系统也是类似的。
+我这边准备了一个空的maven项目，里面还没有做任何配置。
+
+然后我们现在就需要去引入springboot开发必须的依赖，在springboot被称作starter，我们可以去spring官网查看创建springboot应用需要引入哪些starter
+需要引入的是这两部分，一个是parent设置，另一个一个是springbootstarterweb依赖
 打开spring.io，将代码粘贴到pom中
 执行mvn compile进行下编译
+没有问题，编译成功了，好，这就是创建一个springboot web应用所需要引入的依赖，是不是比我们之前创建springweb应用引入的东西少很多。
+好，我们现在将刚刚那个项目导入到ide进行简单的开发，我这边是用的intellj，其他ide也都是类似的
 导入到intellJ
-增加一个controller类--DemoController，在类上增加两个注解：@Controller @EnableAutoConfiguration
+接着我们就可以直接创建controller了，使用过spring mvc的朋友，应该很熟悉如何创建一个controller类，我这边演示的话就写一个最简单的方法好了。
+
+1、首先增加一个controller类--DemoController，在类上增加两个注解：@Controller 
 @Controller：
-@EnableAutoConfiguration：
 增加一个mapping方法：hello，在方法上增加两个注解：@RequestMapping("/") @ResponseBody
 @RequestMapping("/")：
 @ResponseBody：
-增加main方法：SpringApplication.run(SampleController.class, args);
+2、然后我们选择一个类作为这个springboot的主类，这个主类需要提供一个main方法为springboot应用提供启动入口，我这边就直接使用我们刚刚创建的这个controller类作为主类，然后在这个类中的那个增加main方法
+在main方法中，使用这段代码启动这个springboot：SpringApplication.run(SampleController.class, args);
+3、为主类增加@EnableAutoConfiguration，表明这个应用开启自动配置功能。ok，所有代码写完了，我们来试着运行一下
 运行。
-不演示健康检查了吧（时间太长）
-
+好，我们看到应用已经启动起来了，那我们到浏览器访问一下。访问成功，好，这么简单几步，一个sprinboot应用就搭建完成了。
 第三节
 #上节课我们用很少的代码和配置快速搭建了一个spring boot的web应用，这节课我们深入看一下我们引入的配置都做了些什么
 #我们首先详细分析下一个springboot应用中的pom依赖都有什么。回顾我们上节课演示的简单spring boot应用，pom文件中有两个值得我们关注的重点部分：一个是pom文件继承了：spring-boot-starter-parent，另一个是pom中依赖了：spring-boot-starter-web，好，springboot做的第一个重点工作，就体现在这两个pom配置里，那么这两个配置都帮我们完成了哪些事情呢？
