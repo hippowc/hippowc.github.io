@@ -1,0 +1,130 @@
+讲义：
+第一节：
+spring介绍：springboot是spring的一个产品级应用。它使得创建基于spring的web应用变得非常简单。它提前帮你引入了必要的spring以及三方库的jar包，你只需要进行极少的配置就可以创建一个可以单独运行的web应用。
+spring boot的特点：提供独立运行的spring 应用；嵌入式的web容器（不需要部署war包）；提供默认的starter，简化maven配置；自动配置spring；提供产品级的特性：监控，健康检查等；没有代码生成和xml配置；
+##spring boot不是spring的精简版本，而是对spring进行了了一层包装，使得基于spring的开发变得更加高效快捷。
+##使用过spring boot进行开发的朋友一定体会到过spring boot带来的如斯般顺滑的开发体验，那么spring boot是如何做到这些的呢？这就是这门课程要为大家呈现的内容。
+##接下来介绍下我们的课程安排：
+spring boot快速上手  ##从零创建一个springboot应用并运行；特性展示；引出问题：功能模块在哪里？功能模块是如何进行配置？功能模块又是怎样被调用的？（以tomcat容器为例）
+spring boot starter  ##parent pom做了什么；starter中是什么；有什么作用
+spring boot的配置方式  ##配置文件在哪里；spring boot无xml的配置方式；@Configuration @Import 等注解的使用；如何支持用户自定义配置；可以做些代码演示；
+@EnableAutoconfiguration 注解分析  ##注解组合；EnableAutoconfiguration注解分析；默认配置文件在哪里
+运行环境推测—SpringApplication的初始化  ##初始化做了什么；如何进行运行环境推测；processor类的注册
+配置类处理器—ConfigurationClassPostProcessor介绍  ##类介绍；autoconfig文件的读取
+配置类的解析及注册过程  ##功能模块如何注册到spring上下文；如何使用；以tomcat为例
+##整个课程的内容大概是这样，下节课我们使用springboot搭建一个web应用，进而对spring boot有更深入的了解
+
+第二节
+#这节课我们主要通过实际操作，给大家演示下如何使用spring boot快速创建一个web应用。
+系统要求：spring boot1.5.8要求jdk7以上，Spring Framework 4.3.12以上，编译工具如果使用maven的话maven要求3.2以上
+代码演示：
+##
+展示mven以及java版本：mvn -version
+创建一个maven工程：mvn archetype:generate -DgroupId=com.pers -DartifactId=demo-springboot -DarchetypeArtifactId=maven-archetype-quickstart -DinterativeMode=false
+打开spring.io，将代码粘贴到pom中
+执行mvn compile进行下编译
+导入到intellJ
+增加一个controller类--DemoController，在类上增加两个注解：@Controller @EnableAutoConfiguration
+@Controller：
+@EnableAutoConfiguration：
+增加一个mapping方法：hello，在方法上增加两个注解：@RequestMapping("/") @ResponseBody
+@RequestMapping("/")：
+@ResponseBody：
+增加main方法：SpringApplication.run(SampleController.class, args);
+运行。
+不演示健康检查了吧（时间太长）
+
+第三节
+#上节课我们用很少的代码和配置快速搭建了一个spring boot的web应用，这节课我们深入看一下我们引入的配置都做了些什么
+#我们首先详细分析下一个springboot应用中的pom依赖都有什么。回顾我们上节课演示的简单spring boot应用，pom文件中有两个值得我们关注的重点部分：一个是pom文件继承了：spring-boot-starter-parent，另一个是pom中依赖了：spring-boot-starter-web，好，springboot做的第一个重点工作，就体现在这两个pom配置里，那么这两个配置都帮我们完成了哪些事情呢？
+#spring-boot-starter-parent：
+#用过maven朋友都知道，parent标签表示该工程中会继承父pom文件中的各种配置：包括groupId，version，依赖等等。
+#spring-boot-starter-parent事先定义好了很多默认配置，譬如：jdk编译版本，文件编码，插件配置等等。springboot应用会在spring-boot-starter-parent中继承各种配置，最重要的就是依赖的各种jar包的版本配置。spring-boot-starter-parent为spring boot应用管理了各种jar的合适版本。在继承了parent之后，springboot应用中依赖的各种starter是不需要配置版本号的，因为parent已经帮我们配置好了。
+#spring-boot-starter-web：
+#接下来我们看下唯一的一个pom依赖，spring-boot-starter-web；通过使用依赖分析工具，我们可以发现这个pom引入了很多jar包：spring-web,tomcat-embed-core,jackson-databind
+#其实这个stater的作用就是：引入所有spring web应用所必须的jar。
+#所以我们可以看出，springboot，通过starter这个东西，帮我们做好了依赖配置和依赖管理，当我们要做一个web应用时，不需要自己再去查找依赖的jar包，以及版本号，甚至版本冲突问题，非常方便。
+#当然，如果你觉得需要使用其他版本的jar包，也可以非常方便的自己配置pom依赖，覆盖掉spring boot帮你提供的默认配置。
+
+第四节
+#上节课我们了解了springboot通过starter引入了应用开发所必须的jar包，接下来的问题是，我们要在spring中使用这些jar包中的服务，就要将相关的类声明称为bean，并交由spring管理，这样我们就可以在使用的时候从spring容器中取出了。之前使用spring的时候，这些都需要配置在一些特定的xml中，但是springboot宣称的目标之一是不使用xml进行配置，那么springboot是使用什么方式配置这些bean的呢？
+#在spring3.0之后spring提供了不使用xml的另外一种配置方式：使用Java类+Configuration注解的方式。那么，接下来我们详细看下如何使用这种方式进行spring配置。
+#首先要了解下配置类的一些spring知识点：
+#主要分为两部分：一个是配置类会使用到的注解，我们需要了解下他们的作用以及是如何使用的；另外一个是基于注解配置的spring上下文，使用过spring的朋友对ApplicationContext应该都有所了解：在启动spring应用之前，我们会基于某种配置创建spring的上下文，后面所有的bean都是从这个上下文中取得的。之前使用比较多的ClassPathXmlApplicationContext，就是从xml文件中读取所有bean配置，并启动spring容器。而我们要讲的AnnotationConfigApplicationContext就是从配置类中读取bean配置并启动spring容器。
+
+@Configuration:首先它是一个类注解，他表明这个类声明了一个或者多个被@Bean注解的方法，这个类可以被spring容器处理并将bean注册到spring上下文中。被它注解的类我们简称为配置类。
+@Bean:方法注解，表明一个方法会制造一个有spring容器管理的bean，这个方法会返回一个类的实例对象，方法名为默认bean的名称。通常这种方法会定义在被@Configuration注解的类中
+@Import：引入一个或者多个配置类，它的功能类似于spring xml配置中的import标签，简单来讲就是将多个配置类汇总到一个配置类中。另外还可以import ImportSelector类以及ImportBeanDefinitionRegistrar。这两种类型的引用在springboot自动配置时也很重要，我们后面会提到
+AnnotationConfigApplicationContext：
+独立的spring上下文，接受使用注解的类作为配置输入--尤其是被Configuration注解的类，我们使用这个去创建配置类的spring上下文，可以使用register方法一个个的注册配置类，也可以采用扫描的方式注册
+register方法：注册一个或者多个注解类，注册后要调用refresh方法保证spring可以完整的处理这些类
+#接下来我们还是通过一个简单的例子来了解下这些注解是如何使用的。
+
+第五节
+#上节课我们简单讲了一下spring中配置注解的相关知识，接下来我们就可以深入研究下，springboot是如何使用配置类进行配置的。
+#在springboot starter引入的依赖中，有一个jar包：spring-boot-autoconfigure，这个jar包中包含了各种各样基于注解的配置类,springboot已经帮我们为很多常用的类进行了默认配置。这些配置类会在springboot启动时加载到spring上下文中，并注册配置的bean。但
+#这个包下面的配置类包含了各种各样的常用类的配置，但是并不是所有的配置都是我们需要的：譬如springboot使用了嵌入式容器，它也提供了各种各样的嵌入式容器的配置类--嵌入式tomcat，嵌入式的jetty等等，这些配置类加载到springboot后会将嵌入式容器的bean注册到spring以供使用；但是有一个问题，难倒springboot加载的时候会将tomcat和jetty的bean默认都注册进来吗？当然不是，springboot会智能的根据当前情况推测是否要加载当前的配置类。这些配置类是基于条件注解的配置类。
+#条件注解：简单来讲就是满足某些条件时，才启用配置。
+#它可以标记在@Bean注解的方法上，表示满足某一条件才会将这个bean注册到spring容器中；也可以标记在Configuration类上，表示对这个中所有的@Bean注解的方法都其中这个条件配置
+#几种条件注解：
+@ConditionalOnBean（仅仅在当前上下文中存在某个对象时，才会实例化一个Bean）
+@ConditionalOnClass（某个class位于类路径上，才会实例化一个Bean）
+@ConditionalOnExpression（当表达式为true的时候，才会实例化一个Bean）
+@ConditionalOnMissingBean（仅仅在当前上下文中不存在某个对象时，才会实例化一个Bean）
+@ConditionalOnMissingClass（某个class类路径上不存在的时候，才会实例化一个Bean）
+@ConditionalOnNotWebApplication（不是web应用）
+#我们看一个例子：嵌入式tomcat配置类，当类路径中存在Servlet.class Tomcat.class时，并且spring容器中没有EmbeddedServletContainerFactory.class这个bean，就会将TomcatEmbeddedServletContainerFactory这个bean注册到spring容器中。
+#这就是springboot中类的配置方式
+
+第六节
+#好，接下来的课程我们要开始深入到springboot的代码中去了，从代码层面来分析springboot自动配置的原理是怎样的。这节课我们主要来看下springApplication的初始化过程是怎样的。
+#我们再来回顾下之前搭建springboot的那个简单的例子
+#可以发现两个springboot特色的代码，一个是EnableAutoConfiguration注解，这个注解的功能是：
+#它表示开启springboot自动配置的功能，springboot会根据当前classpath中引入了什么类试着推测代码中可能需要什么bean，并去配置。譬如：如果代码类路径中有tomcat-embedded.jar这样一个jar包，那么springboot就认为你很有可能需要使用这个jar包创建嵌入式的tomcat，于是他就将创建tomcat的工厂类注册到spring上下文中，以便于创建嵌入式的tomcat。
+#关于它的实现原理我们后面会进行介绍
+#另一个就是我们主程序的入口函数：SpringApplication.run(DemoController.class, args); springboot自动配置的秘密就在这个启动函数中。这节课我们先研究下SpringApplication这个类。
+#这个类负责在java的main函数中启动spring应用，启动spring应用时默认会做一下几歩：
+1、根据classpath创建合适的ApplicationContext也就是spring上下文。
+2、注册CommandLinePropertySource类，将命令行参数暴露为spring的properties
+3、接着刷新spring上下文，加载所有单例的bean
+4、触发所有实现了CommandLineRunner的bean
+#大家可能对我刚说的这几步不太了解，没有关系，我们这个课程不需要对所有步骤都关心，关键的地方我都会详细的跟大家讨论。
+#大概知道了SpringApplication这个类是做什么的，我们接下继续研究程序的入口函数：也就是SpringApplication的run方法。
+#这个run方法首先会创建一个SpringApplication的实例，并调用这个实例的run方法。
+#我们分开来看，首先看下SpringApplication的实例初始化的时候做了什么
+1、推断是否是web环境。这边多说两句，它是如何推断是否是web环境的呢？很简单，它使用当前线程的classloader去试着加载Servlet，ConfigurableWebApplicationContext这两个类，如果能加载到，springboot就认为当前是web环境。这个也是springboot做任何推断的一个典型思路，根据当前classpath中包含的类，去揣测使用者到底想做什么功能。当我们引入spring-boot-starter-web这个依赖后，这个两个类都会随之引入进来，所以springboot判断当前环境是web环境
+2、设置一些初始化类和listener类。这块我们可以先不用关心。
+3、获取并设置调用run函数的主类。就是说使用者是在哪个类的main函数中调用了SpringApplication的run方法，要把这个类记录一下，后面会使用到。
+主要是这三步，就完成了SpringApplication实例的初始化过程。
+
+第七节
+#上节课我们介绍了下SpringApplication的初始化，接下来我们要研究SpringApplication的run函数都做了些什么
+#首先第一个关键步骤：创建ApplicationContext，也就是spring上下文。这个使用过spring的朋友应该都知道，一般我们使用spring的第一步就是创建上下文，这个上下文会加载我们的bean配置。所有的bean实例也都是从这个里面取得的。
+#在创建ApplicationContext的时候，有两种选择，一种是创建AnnotationConfigApplicationContext，一种是创建AnnotationConfigEmbeddedWebApplicationContext。这两个类型的ApplicationContext在初始化的时候都是接受配置类作为配置文件，而不是xml。他们区别是：后者会创建并启动一个嵌入式的servlet容器作为web容器。通俗来讲也就是，使用后一种ApplicationContext启动后就能够直接提供web服务了。
+#springboot会判断当前是否是web环境，关于怎么判断web环境，我们上节课已经讲过了；如果是web环境则初始化AnnotationConfigEmbeddedWebApplicationContext，后面一种带有嵌入式servlet容器的spring上下文，否则初始化前一种spring上下文。按照我们之前的例子，springboot会推断当前环境是web环境，所以会创建后一种ApplicationContext。
+#接下来在ApplicationContext初始化的过程中，有一个重要的地方我们需要关注，它会将注解处理器先加载的spring上下文中，以便于使用这些处理器对那些含有注解的bean进行处理。
+#有处理configuration注解的，有处理autowire的，还有处理Require注解的等等。考虑到我们课程的主题，我们主要集中在研究configuration注解处理器的的功能。
+#ConfigurationClassPostProcessor配置类处理器：用来对Configuration注解的类进行处理，这个处理器会分析处理配置类中的Import注解，Bean注解，@ComponentScan注解等等并做不同的处理。
+#我们继续刚才springboot的启动过程。
+#注册完注解处理类之后，（其实还会注册一些scanner，用于扫描项目中的bean，这个我们不细讲，有兴趣的同学可以自己研究），那么注册完这些之后，springboot就实例化了一个ApplicationContext。
+#接着SpringApplication会对这个spring上下文做一些准备工作，这些工作在SpringApplication的prepareContext方法中进行，在准备工作中会将我们的运行SpringApplication的主类注册到spring上下文中。
+#截止到目前为止，spring上下文中已经包含了两类bean，一个是注解处理器，我们尤其关注配置类处理器。另一个就是我们的主类，接下来springboot就要开始对配置类进行解析啦。
+
+
+第八节
+#这节课我们要开始讲springboot自动配置最主要的实现原理部分了，EnableAutoConfiguration的解析。
+#在上一节课程中，springboot已经创建好了一个spring上下文，接下来就要读取配置类，并将配置中的bean注册到spring上下文中以供使用。
+#那么我们不禁会想到：
+配置类在哪里？回顾我们之前那个简单的应用，似乎我们没有做过什么配置啊。确实是，不过我们为主类加了一个自动配置的注解：EnableAutoConfiguration。在springboot应用启动过程中啊，配置类处理器会将我们的主类当做一个配置类去处理，然后会去解析eac这个注解。
+#这个注解再处理过程中，实际上是由两个注解组成。一个是AutoConfigurationPackage，一个是@Import(EnableAutoConfigurationImportSelector.class)；
+#配置类处理器发现我们这个中包含有Import注解，就会去对import注解进行处理。之前我们讲过imort这个注解的参数主要有有三种：
+标有Configuration的注解类，ImportSelector接口实现类，ImportBeanDefinitionRegistrar接口实现类。当Import参数不同的时候，配置类处理器对Import的处理方式也是不同的。
+#在EnableAutoConfiguration中Import的类是ImportSelector的实现类EnableAutoConfigurationImportSelector
+#这个selector就提供了springboot启动的所有默认配置。它实现了ImportSelector接口的selectImports方法，这个方法会返回所有默认配置类的类名称。那么它是怎么做的呢？
+#这个selectImports方法，首先会查找classpath下所有jar包下META-INF/spring.factories的这个文件
+#这个文件是一个properties文件，文件中的内容都是以key-value形式保存的，selectImports这个方法，会读取EnableAutoConfiguration这个key对应的value值，也就是springboot启动时所有默认配置类的类名称。
+#当我们的配置类处理器处理这个Import注解的时候，就是调用这个selectImports方法，获取到所有合适的默认配置类的类名称。然后将这些配置类注册到spring上下文中。这样我们在代码中就可以正常使用所有springboot为我们配置好的bean了。
+
+
+
+
