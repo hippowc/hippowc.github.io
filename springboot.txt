@@ -42,25 +42,26 @@ SpringApplication的初始化
 
 接着我们就可以直接创建controller了，使用过spring mvc的朋友，应该很熟悉如何创建一个controller类，我这边演示的话就写一个最简单的方法好了。
 
-1、首先增加一个controller类--DemoController，在类上@Controller注解 
+1、首先增加一个controller类--DemoController，在类上@Controller注解 ，声明这是一个spring的controller
 增加一个mapping方法：hello，
 @RequestMapping("/")：使用requestmapping注解设置这个mapping方法与url的映射关系
 @ResponseBody：使用responsbody注解，将这个方法的返回值，放入到response的body中。
 ok，这样一个简单的controller类就完成
-2、然后我们选择一个类作为这个springboot的主类，这个主类需要提供一个main方法为springboot应用提供启动入口，我这边就直接使用我们刚刚创建的这个controller类作为主类，然后在这个类中的那个增加main方法
+2、然后我们选择一个类作为这个springboot的主类，这个主类需要提供一个main方法为springboot应用提供启动入口，我这边就直接使用我们刚刚创建的这个controller类作为主类，然后在这个类中增加一个main方法
 在main方法中，加入这段代码启动这个springboot：SpringApplication.run(SampleController.class, args);
 3、最后为主类增加一个注解@EnableAutoConfiguration，表明为这个应用开启自动配置功能。ok，所有代码写完了，我们来试着运行一下
 运行。
 好，我们看到应用已经启动起来了，那我们到浏览器访问一下。访问成功，好，这么简单几步，一个sprinboot应用就搭建完成了。
 第三节
-#上节课我们用很少的代码和配置快速搭建了一个spring boot的web应用，这节课我们深入看一下我们引入的配置都做了些什么
-#我们首先详细分析下一个springboot应用中的pom依赖都有什么。回顾我们上节课演示的简单spring boot应用，pom文件中有两个值得我们关注的重点部分：一个是pom文件继承了：spring-boot-starter-parent，另一个是pom中依赖了：spring-boot-starter-web，好，springboot做的第一个重点工作，就体现在这两个pom配置里，那么这两个配置都帮我们完成了哪些事情呢？
+#我们这节课聊一聊spring-boot-starter，
+上节课我们用很少的代码和配置快速搭建了一个spring boot的web应用，这节课我们深入看一下我们引入的配置都做了些什么
+#我们首先详细分析下我们之前那个应用中的pom文件都配置了什么。回顾我们上节课演示的简单应用，pom文件中有两个值得我们关注的重点部分：一个是pom文件继承了：spring-boot-starter-parent这个父pom，另一个是pom中依赖了：spring-boot-starter-web，好，springboot做的第一个重点工作，就体现在这两个pom配置里，那么这两个配置都帮我们完成了哪些事情呢？
 #spring-boot-starter-parent：
-#用过maven朋友都知道，parent标签表示该工程中会继承父pom文件中的各种配置：包括groupId，version，依赖等等。
-#spring-boot-starter-parent事先定义好了很多默认配置，譬如：jdk编译版本，文件编码，插件配置等等。springboot应用会在spring-boot-starter-parent中继承各种配置，最重要的就是依赖的各种jar包的版本配置。spring-boot-starter-parent为spring boot应用管理了各种jar的合适版本。在继承了parent之后，springboot应用中依赖的各种starter是不需要配置版本号的，因为parent已经帮我们配置好了。
+#用过maven同学都知道，parent标签表示该工程中会继承父pom文件中的各种配置：包括groupId，version，依赖等等。
+#spring-boot-starter-parent事先定义好了很多默认配置，譬如：jdk编译版本，文件编码，插件配置等等。springboot应用会在spring-boot-starter-parent中继承各种配置，最重要的就是它会继承依赖的各种jar包的版本配置。spring-boot-starter-parent为spring boot应用管理了各种jar的合适版本。在继承了parent之后，springboot应用中依赖的各种starter是不需要配置版本号的，因为parent已经帮我们配置好了。
 #spring-boot-starter-web：
 #接下来我们看下唯一的一个pom依赖，spring-boot-starter-web；通过使用依赖分析工具，我们可以发现这个pom引入了很多jar包：spring-web,tomcat-embed-core,jackson-databind
-#其实这个stater的作用就是：引入所有spring web应用所必须的jar。
+#从这些依赖中我们其实就可以看出，这个stater的作用就是：引入所有spring web应用所必须的jar包。
 #所以我们可以看出，springboot，通过starter这个东西，帮我们做好了依赖配置和依赖管理，当我们要做一个web应用时，不需要自己再去查找依赖的jar包，以及版本号，甚至版本冲突问题，非常方便。
 #当然，如果你觉得需要使用其他版本的jar包，也可以非常方便的自己配置pom依赖，覆盖掉spring boot帮你提供的默认配置。
 
