@@ -27,7 +27,7 @@ SpringApplication的初始化
 第二节
 #这节课我们主要通过实际操作，给大家演示下如何使用spring boot快速创建一个web应用。
 那么我们开始
-首先我们简单说一下使用springboot时系统环境徐做哪些准备，不同版本相对的系统要求也是不同的，我们这次演示使用的是springboot的 1.5.8release版本：spring boot1.5.8要求对java的版本要求是java7以上，编译工具如果使用maven的话maven要求3.2以上，然后Spring Framework 4.3.12以上，
+首先我们简单说一下使用springboot时系统环境需要做哪些准备，不同版本的springboot相对的系统要求也是不同的，我们这次演示使用的是springboot的 1.5.8release版本：spring boot1.5.8对java的版本要求是java7以上，编译工具如果使用maven的话maven的版本要求3.2以上，然后相对应的它使用的Spring Framework 的版本是4.3.12及以上，
 这些东西都可以去各自的官网上下载，准备好之后，我们可以进行代码开发了。
 代码演示：
 ##
@@ -38,20 +38,18 @@ SpringApplication的初始化
 然后我们现在就需要去引入springboot开发必须的依赖，在springboot被称作starter，我们可以去spring官网查看创建springboot应用需要引入哪些starter
 需要引入的是这两部分，一个是parent设置，另一个一个是springbootstarterweb依赖
 打开spring.io，将代码粘贴到pom中
-执行mvn compile进行下编译
-没有问题，编译成功了，好，这就是创建一个springboot web应用所需要引入的依赖，是不是比我们之前创建springweb应用引入的东西少很多。
-好，我们现在将刚刚那个项目导入到ide进行简单的开发，我这边是用的intellj，其他ide也都是类似的
-导入到intellJ
+使用ide的mvn插件reimport下，将这个依赖引入到项目中。
+
 接着我们就可以直接创建controller了，使用过spring mvc的朋友，应该很熟悉如何创建一个controller类，我这边演示的话就写一个最简单的方法好了。
 
-1、首先增加一个controller类--DemoController，在类上增加两个注解：@Controller 
-@Controller：
-增加一个mapping方法：hello，在方法上增加两个注解：@RequestMapping("/") @ResponseBody
-@RequestMapping("/")：
-@ResponseBody：
+1、首先增加一个controller类--DemoController，在类上@Controller注解 
+增加一个mapping方法：hello，
+@RequestMapping("/")：使用requestmapping注解设置这个mapping方法与url的映射关系
+@ResponseBody：使用responsbody注解，将这个方法的返回值，放入到response的body中。
+ok，这样一个简单的controller类就完成
 2、然后我们选择一个类作为这个springboot的主类，这个主类需要提供一个main方法为springboot应用提供启动入口，我这边就直接使用我们刚刚创建的这个controller类作为主类，然后在这个类中的那个增加main方法
-在main方法中，使用这段代码启动这个springboot：SpringApplication.run(SampleController.class, args);
-3、为主类增加@EnableAutoConfiguration，表明这个应用开启自动配置功能。ok，所有代码写完了，我们来试着运行一下
+在main方法中，加入这段代码启动这个springboot：SpringApplication.run(SampleController.class, args);
+3、最后为主类增加一个注解@EnableAutoConfiguration，表明为这个应用开启自动配置功能。ok，所有代码写完了，我们来试着运行一下
 运行。
 好，我们看到应用已经启动起来了，那我们到浏览器访问一下。访问成功，好，这么简单几步，一个sprinboot应用就搭建完成了。
 第三节
