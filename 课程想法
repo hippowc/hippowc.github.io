@@ -1,1 +1,8 @@
 做开源软件原理以及横向比较，性能开发效率等的评测
+
+1、java web框架
+按照mvc的方式进行：
+v的框架：freemark，them，前端框架等等，深入源码分析。
+c的框架：介绍下spring，play，grails，final，vert.x。这些框架的不同，仅仅是c层的不同嘛？还是整合的不同
+m：mybatis，hibernate的分析。
+开头最好有一些流行框架的性能测试：并发量，相应时间。
