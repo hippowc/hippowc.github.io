@@ -1,0 +1,32 @@
+
+预编译语句：
+PreparedStatement是java.sql的一个借口，是statement的子接口，通过statement执行sql时，需要将sql语句发送给dbms，编译后执行。预编译语句与statement不同，在创建preparedstatement时就指定了sql语句，该语句回立即发送给dbms进行编译，执行时直接运行编译后的语句。
+作用：反复使用同一sql时进行预编译，另外可以防止sql注入
+
+如果采用预编译的方式，那就要直接跟数据库打交道了，就不能使用ibatis底层的东西了，但是不好的一点是要考虑的东西也多了，譬如要考虑事务的支持。譬如得搞清楚目前对事务的支持是怎么样的，我要做成什么样的？hibernate又是什么样的？等等
+
+--找一个防止sql注入的方式，快速，耦合度高，不优雅
+--自己实现数据库的连接，需要做的东西比较多，数据库连接，事务等等。
+
+两条路。
+第一种的话，可以采用--正则表达式，字符串过滤。
+
+sqlmapClientImpl中，保存了代理执行类，根据线程不同保存了sqlMapSession（为何每个线程对应一个session）
+sqlMapSession中，保存了代理执行类，以及sessionScope
+
+配置文件中的几个概念：
+Datasource 数据源，javax.sql.DataSource：提供连接的工厂，这个接口的实现是由驱动开发者提供的。这个接口就一个方法getConnection()，用于建立一个数据源的连接。有各种各样的datasource，阿里这边用的就是tddl-TGroupDataSource
+Connection：一个与特定数据库的连接或session，在这个connection中可以执行语句或者返回结果。有创建语句，预编译语句，自动提交，默认是自动提交--执行完sql语句并提交保存在数据库中。另外还有commit，rollback，close等方法
+
+只要有了datasource就可以进行数据库操作了，其他第三方会提供一些类方便操作。
+sqlMapClient，ibatis用于解析xml配置文件
+
+transactionManager，org.springframework.jdbc.datasource.DataSourceTransactionManager;
+是PLatformTransactionManager的实现类，该接口是spring事务架构的核心接口，只有三个核心方法，获取事务，提交事务以及回滚。
+transactionTemplate, org.springframework.transaction.support.TransactionTemplate;
+transactionTemplate也是用于事务管理的类，可以以编程式实现事务。
+详细用法：http://andylele.blog.sohu.com/142207434.html
+先new一个DefaultTransactionDefinition，设置传播属性，然后通过transctionManager的getTransaction方法返回TransactionStatus，这个就是事务对象，然后执行sql语句，最后进行commint或着rollback 事务对象即可。
+--先了解下transactionManager的原理，发现还有jpaTransactionManager
+
+其实不管是sql执行或者是事务，都是针对connection做文章。
