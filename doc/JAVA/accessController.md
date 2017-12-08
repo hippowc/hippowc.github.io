@@ -1,0 +1,10 @@
+在很多jdk源码中看到AccessController.doPrivileged，一直不知道这个类有什么作用，这次看common-logging源码时，加载classloader时又看到这个类，遂决定看下这个类的作用。
+简单来说，允许一个类实例的买吗，通知这个AccessController，不用进行checkPermission检查。
+复杂来讲要扯到java的安全模型：https://www.ibm.com/developerworks/cn/java/j-lo-javasecurity/
+
+java将执行程序分为本地和远程两种，本地代码默认为可信任，远程代码不可信。本地代码可以访问一切本地资源，远程代码在jdk1中限制在沙箱中，这部分java代码限定在jvm特定的运行范围，并严格限制对本地系统的资源访问。
+但这样太严格，远程代码无法访问本地系统文件。于是增加安全策略，允许用户制定代码对本地资源的访问权限。
+最新的安全机制，引入域的概念，虚拟机会把代码加载到不同的系统域和应用域，不同的域具有不同的权限。
+
+最常用的API是doPrivileged方法，它能够使一段受信任代码获得更大的权限，可以临时访问资源。
+jdk中与安全相关的类都放在java.security中
