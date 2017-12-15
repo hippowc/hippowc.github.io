@@ -7,11 +7,33 @@
 --ReetrantLock，可重入锁。使用方法和synchronized修饰代码块的时候类似，不过要在用完后显示的unlock释放锁。看起来使用synchronized更安全，为何要使用这个锁：1 提供trylock方法，该方法可以判断锁是否被其他线程占有，可以立即返回。 2 可以构造公平锁和非公平锁。 3 提供ReentrantReadWriteLock 适用于读不互斥读多写少的场景。简单使用场景：
 lock.lock();/lock.readLock();/lock.writeLock();
 try{} finally {lock.unlock();}
---其他CountDownLatch，CyclicBarrier，SemaPhore，Exchanger，FutureTask可以后面详细学
+**--其他CountDownLatch，CyclicBarrier，SemaPhore，Exchanger，FutureTask可以后面详细学**
 3、网络io：目前主要接触的网络模型是tcp协议栈。当使用socket进行网络开发时实现方式有三种：bio，nio，aio
 bio：一个socket套接字需要使用一个线程来进行处理，发生连接，读写数据都会阻塞线程。这种模式编程简单，主要问题是一个线程只处理一个socket，如果server端要支持多并发，就要支持多线程。
 nio：jdk1.4 事件驱动，采用reactor模式，一个线程处理多个socket，然后派发到不同线程中
 aio：jdk1.7 异步io，采用proactor模式，与nio区别是：aio进行读写时，调用read write方法，并传入completeHandler（动作完成后处理器），在完成读写后，会调用handler
 4、三种基本中间件：远程调用和对象访问；消息；数据访问
 5、java虚拟机：有多种产品（实现）oracle hotspot，microsoft jvm，bea jrocket被oracle收购了；其中hotspot应用最广泛。
-6、rpc框架部分介绍很详细，可以直接看书
+**6、rpc框架部分介绍很详细，可以直接看书，随着项目多看几遍，练习。**
+7、数据访问层
+当业务访问数据库的压力超过单机极限，几种解决思路：
+--应用优化 --增加缓存或者搜索引擎 --将数据分到多个数据库上
+拆分数据库：垂直拆分，将不同业务的数据分开；水平拆分：同一种数据分到不同库。
+垂直拆分问题：事务--分布式事务 多表join不能。水平拆分问题：单个逻辑跨库查询。
+8、分布式事务
+the open group，分布式事务规范 ：定义了三个组件：
+--应用程序，即要使用分布式事务的程序，定义了事务的边界，即哪些操作作为一个事务
+--资源管理器，即数据库系统
+--事务管理器
+两阶段提交：在单库完成操作后，会进行提交或者回滚。两阶段提交是在完成操作后，增加一个准备阶段，都准备好后，一块提交，如果有没有准备好，则都回滚
+比两阶段提交更轻量级：paxo协议：
+9、消息中间件：
+消息能解耦这样一种场景：当A系统完成某件事情后，需要通知B系统。如果使用远程调用的方法可能A系统会依赖B系统。
+jms，javaee的消息规范
+几个问题：
+--消息发送一致性：业务操作成功了，消息一定要发送出去，反之不发送。
+具体到代码时：先发消息，再执行业务操作；或者先执行操作，再发消息。似乎都不能保证一致。
+jms的一些类含义，p2p模式和发布订阅模式
+
+
+
