@@ -45,6 +45,9 @@ class A:        # 定义类 A
 class B:         # 定义类 B
 class C(A, B):   # 继承类 A 和 B
 
+实例化：
+a = A()
+
 
 
 
