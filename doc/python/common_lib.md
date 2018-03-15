@@ -32,7 +32,7 @@ headers = {'User-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 
 login_url = ' http://ssfw.xmu.edu.cn/cmstar/userPasswordValidate.portal
 #构造登录请求
 req = urllib.request.Request(login_url, headers = headers, data = post_data)
-#构造cookie
+#构造cookie 在python 2.7中 为cookielib模块
 cookie = http.cookiejar.CookieJar()
 #由cookie构造opener
 opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie))
@@ -51,7 +51,7 @@ todo
 
 4 jupyter 网页记事本
 
-
+5 python标准库，可以去网站直接查询：https://docs.python.org/2.7/library/index.html
 
 
 
