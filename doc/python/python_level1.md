@@ -8,7 +8,13 @@ input([prompt]) 函数和 raw_input([prompt]) 函数基本类似，但是 input 
 open 函数
 你必须先用Python内置的open()函数打开一个文件，创建一个file对象，相关的方法才可以调用它进行读写。
 file object = open(file_name [, access_mode][, buffering])
-File对象的用法：todo
+eg：open('./test.txt', 'r/w/a')，表示读、写、追加。
+
+File对象的用法：
+file.read()是一次读完所有，放到内存。如果文件比较大可以readline()。另外还有更优雅的解决方案，file可以看作一个sequence，可以使用：
+for line in file 每次处理一行即可。
+file.write('xxx')向文件中写入内容。
+file.close()可以关闭文件，关闭后不能在进行读写。file引用改变后会自动关闭，但是手动close是一个好习惯
 
 2 异常处理
 捕捉异常可以使用try/except语句。try/except语句用来检测try语句块中的错误，从而让except语句捕获异常信息并处理。
@@ -44,6 +50,8 @@ self 代表类的实例，self 在定义类的方法时是必须有的，虽然�
 class A:        # 定义类 A
 class B:         # 定义类 B
 class C(A, B):   # 继承类 A 和 B
+
+在定义类的时候，python2.7有时会继承(object)类，这样会继承很多高级属性，虽然目前可能用不到
 
 实例化：
 a = A()
