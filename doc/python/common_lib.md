@@ -83,6 +83,9 @@ split：按照模式分割字符串
 
 5 python标准库，可以去网站直接查询：https://docs.python.org/2.7/library/index.html
 
+6 PIL python image lib
+用于处理图片的python库
+
 
 
 
