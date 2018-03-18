@@ -39,6 +39,10 @@ opener = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookie))
 #发送登录请求，此后这个opener就携带了cookie，以证明自己登录过
 resp = opener.open(req)
 
+另一个urlib
+import urllib
+urlretrieve(url, filename, reporthook) 下载文件
+
 其他详细内容：https://docs.python.org/2.7/library/urllib2.html
 
 另外请求库可以使用requests这样的三方库，不过自带的已经可以解决所有问题了，可能三方库用起来更方便一点
