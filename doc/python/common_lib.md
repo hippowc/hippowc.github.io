@@ -30,7 +30,7 @@ req.add_header('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/53
 headers = {'User-agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'}
 #登录时表单提交到的地址（用开发者工具可以看到）
 login_url = ' http://ssfw.xmu.edu.cn/cmstar/userPasswordValidate.portal
-#构造登录请求
+#构造登录请求，其中注意这个header是一个dict，而data是一个字符串，并且不是简单的json字符串，是使用&连接的参数字符串
 req = urllib.request.Request(login_url, headers = headers, data = post_data)
 #构造cookie 在python 2.7中 为cookielib模块
 cookie = http.cookiejar.CookieJar()
@@ -41,10 +41,36 @@ resp = opener.open(req)
 
 其他详细内容：https://docs.python.org/2.7/library/urllib2.html
 
+另外请求库可以使用requests这样的三方库，不过自带的已经可以解决所有问题了，可能三方库用起来更方便一点
+
 2 selenium 驱动浏览器进行网站访问
 todo
 
 3 解析库
+import re   #正则表达式
+一般网页的解析都使用正则匹配
+re 模块主要这几个方法：match，search，findall，finditer,split ,sub：有两个参数：前一个为模式（也是一个字符串），后一个为要进行处理的字符串。
+也可以通过先编译再匹配的方式：p = re.compile("pstr"), p.match, p.findall ...
+match：用于查看该字符串是否符合该正则表达式，从最开始开始匹配， 用于判断字符串开头或整个字符串是否匹配,速度快.
+search：查找这个字符串是否有匹配这个模式的部分
+findall：查找这个字符串所有匹配模式的部分
+split：按照模式分割字符串
+
+--正则相关：
+^ $: 开始和结尾
+*：0个或多个前面的字符
++：1个或多个前面的字符
+？：0个或1个前面的字符，如果跟在*或+后，表示非贪婪匹配，匹配尽量少字符
+{}： 匹配指定次数 {1}. {1,3}
+
+[]: 内部任一字符
+[^]: 非内部任一字符
+\d: 匹配数字
+\D: 非数字
+\w: 数字字符下划线
+\W: 非数字字符下划线
+
+三方库：
 -- lxml
 -- beautifulsoup
 -- pyquery（类似jquery语法）
