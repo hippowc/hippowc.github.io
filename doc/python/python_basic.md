@@ -25,6 +25,8 @@ print x
 数据类型：Number 数字，String 字符串， List 列表，Tuple 元组，Dictionary 字典；赋值时不需要声明类型  a = 1; str = 'test';
 Number: int long float complex(复数)
 String: s = 'ilovepython'; 从左向右从0开始，从右往左从-1开始，s[0] #i; s[1:2] #lo; s + 'test' #字符串连接
+        --字符串前缀：'str' #普通字符串  r'str\n' #原始字符串不进行转义  u'str' #unicode  b'str' #二进制
+        --其他方法：'str'.strip() #去掉空格  'str'.split(r'r') #切分字符串，支持正则
 List: []表示，列表数据类型可以不同，从左向右从0开始，从右往左从-1开始；+表示拼接两个列表
 Tuple：()表示，不能二次赋值，相当于只读列表；操作与列表相同；
 Dictionary：{}表示，保存的时key-value对
