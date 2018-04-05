@@ -92,3 +92,18 @@ python中的包：包就是文件夹，但该文件夹下必须存在 __init__.p
 if __name__ == '__main__':
     xxx
 这是因为在python直接解释这个模块时，模块的__name__属性为：__main__，而import时，__name__属性为模块的名称，这样就能保证该模块只在单独运行时会执行某些方法，而在import时不会
+
+8 unicode与中文
+unicode在python中也是一种类型，与str同级别，所有的字符（中文）在python内部都是使用unicode表示，中文在python内部就是使用unicode进行编码
+而使用print可以直接转码，unicode与utf-8一样都是一种编码。
+unicode使用u’xxx‘来表示。
+以’你好‘为例：
+s = u'你好'，那么s内部存储的是u'\u4f60\u597d'
+s = '你好'，那么s内部存储的可能是（依照编译器的编码，我的是utf-8）：'\xe4\xbd\xa0\xe5\xa5\xbd'，这个时候s.decode('utf-8')就是u'\u4f60\u597d'
+print的时候python似乎会自动进行转码
+
+
+
+
+
+
