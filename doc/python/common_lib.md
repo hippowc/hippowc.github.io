@@ -48,7 +48,36 @@ urlretrieve(url, filename, reporthook) 下载文件
 另外请求库可以使用requests这样的三方库，不过自带的已经可以解决所有问题了，可能三方库用起来更方便一点
 
 2 selenium 驱动浏览器进行网站访问
-todo
+使用pip安装，pip install selenium，
+然后根据你要使用的浏览器下载相应的驱动，对于mac linux，下载后将驱动放在PATH下，例如/usr/bin下
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.action_chains import ActionChains
+#使用谷歌浏览器访问
+driver = webdriver.Chrome()
+driver.get('http://www.baidu.com')
+driver.quit() 退出
+driver.switch_to_window（） #转换到某个窗口
+#查找元素，几个例子
+ele = driver.find_element_by_name('wd')
+driver.find_element_by_link_text('登录').click()  #点击登录按钮  
+driver.find_element_by_id('inputuin').clear()   #清除用户名文本框  
+driver.find_element_by_id('inputuin').send_keys('li.yan@munrocn.com')  #向用户名中输入内容  
+#使用元素
+ele.text, ele.size, ele.get_attribute('')获取元素
+ele.click() 点击事件
+ele.clear() 清除内容
+ele.send_keys() 输入内容
+#鼠标操作
+perform()   执行所有ActionChains中存储的行为
+context_click()  右击
+double_click()   双击
+drag_and_drop(source,target)  拖拽：其中source为拖动的原元素，target为释放的目标元素
+move_to_element() 鼠标悬浮
+ActionChains.context_click(element).perform()
+#一些连接到已打开浏览器的尝试
+http://www.spiderpy.cn/blog/detail/36
+
 
 3 解析库
 import re   #正则表达式
