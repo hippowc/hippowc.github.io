@@ -52,3 +52,18 @@ timed_waiting:这个线程会等待一定时间后执行，一般调用这几个
 使用 printf "%x\n" tid 或者 echo "obase=16; <pid>" | bc 将线程转换为16进制（jstatck中tid是16进制的）
 使用 jstack <pid> | grep <tid> -A30 定位到该栈状态
 定位代码位置进行排查
+
+### java内存过高：
+查看哪几个进程内存占用最高：top -c，输入大写M，以内存使用率从高到低排序
+
+假设占用内存最高的Java进程PID为16818
+
+确认是不是内存本身分配过小：jmap -heap 16818
+
+找到最耗内存的对象：jmap -histo 16818 （带上:live则表示先进行一次FGC再统计，如jmap -histo:live 16818）
+
+导出内存转储快照：jmap -dump:live,format=b,file=heap.bin 16818 （使用Eclipse mat分析）
+
+统计进程打开的句柄数：ls /proc/16818/fd |wc -l
+
+统计进程打开的线程数：ls /proc/16818/task |wc -l
