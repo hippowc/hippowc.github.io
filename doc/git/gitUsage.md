@@ -42,3 +42,11 @@ git diff HEAD // 比较工作区和本地仓库
 git diff --cached  // 比较暂存区和本地仓库
 提交命令：
 git commit -am "comments" //可以直接提交
+
+查看本地分支与远程分支对应关系：
+
+git branch -vv
+
+git remote show origin
+
+cat .git/config
