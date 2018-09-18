@@ -50,3 +50,9 @@ git branch -vv
 git remote show origin
 
 cat .git/config
+
+查看提交历史：
+
+git log
+
+git log -p -2 :  -p 选项展开显示每次提交的内容差异，用 -2 则仅显示最近的两次更新
